@@ -68,6 +68,20 @@ Found 1 issue(s):
 - Text-based pattern matching
 - Cannot detect all malware — only patterns in the signature database
 
+## ⚠️ Why This Skill Triggers Security Flags (It's Normal)
+
+**Skill Vetter Plus** is a *security scanner*. To detect dangerous patterns in other skills it must:
+- Search for strings like `eval(`, `os.system`, `shell=True`, API keys, etc.
+- Include network-related imports (for potential future expansions or reporting).
+- Run Python code that looks for "unsafe" execution.
+
+These are **intentional** for a scanner and do **not** exfiltrate data or run malicious code.
+- Full open source: [GitHub](https://github.com/CertainLogicAI/skill-vetter-plus)
+- No external calls in core scan
+- Text-pattern only (no real execution unless you explicitly run it)
+
+Always review the source before use — that's the point of a vetter!
+
 ## Attribution
 
 - Built by: CertainLogic
