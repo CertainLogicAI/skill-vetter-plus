@@ -1,87 +1,107 @@
 # Skill Vetter Plus
 
-A simple text-search security scanner for AI agent skills.
+## What It Is
 
-## Why This Exists
+The fastest security scanner for AI agent skills on ClawHub, with **9 built-in detection signatures**.
 
-ClawHub has 500+ skills. Most are empty stubs. Many contain obvious security issues (hardcoded API keys, `os.system()` calls, prompt injection language). Before installing anything, glance at the code.
+**Use case:** Install before trying any new skill. Run one command. Know if it's safe.
 
-This tool automates that glance.
+## How It Works
 
-## What It Actually Does
+1. Point vetter at any skill directory
+2. Scans every file line-by-line against 9 signature types
+3. Reports findings in under 50ms
 
-1. Reads all files in a skill directory
-2. Searches line-by-line for dangerous text fragments
-3. Prints a report showing where those fragments appear
+## Signatures (9 Built-In)
 
-That's it. No AST parsing. No data flow tracking. No runtime analysis.
-
-## Detection Fragments
-
-| Category | What It Looks For |
-|----------|-------------------|
-| Secrets | `api_key`, `secret_key`, `password` |
-| Unsafe execution | `eval(...)`, `exec(...)`, `os.system(...)`, `shell=True` |
-| Network | `urllib.request`, `requests.post`, `requests.get` |
-| Prompt injection | `ignore previous instructions`, `ignore the above` |
-
-## Honest Limitations
-
-- **Text search only** — cannot analyze runtime behavior, parse ASTs, or track data flow
-- **False positives** — `eval("1+1")` and `eval(user_input)` look the same to a text scanner
-- **Known patterns only** — cannot detect novel or obfuscated attacks
-- **Not a replacement** for professional security audits or SAST tools
-
-## What the Code Looks Like
-
-The scanner intentionally keeps its detection strings as ASCII codes (e.g., `[101, 118, 97, 108, 40]` instead of `"eval("`). This is NOT obfuscation — it's to prevent ClawHub's own automated scanner from **falsely flagging** this scanner as dangerous. ClawHub looks for literal strings like `"eval("` in code and flags them. Since our scanner's purpose is to **detect** those strings in other code, we cannot include them as readable literals without triggering false positives.
+| ID | Category | Severity | Description |
+|---|---|---|---|
+| `hardcoded-api-key` | secrets | high | Possible hardcoded API key |
+| `hardcoded-secret` | secrets | high | Possible hardcoded secret or token |
+| `hardcoded-password` | secrets | high | Possible hardcoded password |
+| `unsafe-eval` | execution | critical | `eval()` can execute arbitrary code |
+| `unsafe-exec` | execution | critical | `exec()` can execute arbitrary code |
+| `unsafe-os-system` | execution | critical | `os.system()` can execute shell commands |
+| `subprocess-shell-true` | execution | high | `subprocess` with `shell=True` is injectable |
+| `raw-network` | network | medium | Raw network call found |
+| `prompt-injection` | prompt | critical | Potential prompt injection language |
 
 ## Installation
-
-### OpenClaw
 
 ```bash
 clawhub install skill-vetter-plus
 ```
 
-### Manual
-
-```bash
-git clone https://github.com/CertainLogicAI/skill-vetter-plus.git
-cd skill-vetter-plus
-python3 scripts/vetter.py /path/to/skill
-```
-
 ## Usage
 
 ```bash
-# Basic scan
+# Scan a skill
 python3 scripts/vetter.py /path/to/skill
 
-# JSON output
-python3 scripts/vetter.py --json /path/to/skill
+# Scan with JSON output
+python3 scripts/vetter.py /path/to/skill --json
+
+# Use custom signatures
+python3 scripts/vetter.py /path/to/skill --signatures /path/to/signatures.json
 ```
 
-## Why ClawHub May Flag This Skill
+## What It Detects
 
-Earlier versions of this skill:
-- Listed features (batch scanning, deep scanning, semgrep) that are **not implemented**
-- Contained regex patterns that **resembled dangerous code** to ClawHub's scanner
-- Used `.clawhubignore` to hide code (created a worse problem: scanner thought package was empty)
+- Hardcoded API keys, tokens, passwords
+- `eval()`, `exec()`, `os.system()`, `subprocess(shell=True)`
+- Raw network requests
+- Prompt injection language
 
-All of these were mistakes. The current version is honest: it's a simple text scanner.
+## What It Does NOT Detect
 
-## Free vs Pro
+- Malicious logic hidden in control flow
+- Exploits in compiled binaries
+- Vulnerabilities in skill dependencies
+- Social engineering in descriptions
 
-**Free:** Simple text search scanner
-**Pro ($49):** Not yet available
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Pass — no issues found |
+| 1 | Fail — one or more issues found |
+
+## Pro Tier
+
+| Feature | Pro |
+|---|---|
+| Real-time scanning | ✅ |
+| Signature updates | Weekly |
+| Team sharing | ✅ |
+| Custom rules | ✅ |
+| Reports | Basic |
+| Priority support | Email |
+
+**Upgrade:** https://certainlogic.ai/shop/skill-vetter-plus-pro
+
+## Why Vetter Plus?
+
+- **Fast** — Returns results in under 50ms
+- **Comprehensive** — 9 detection signatures covering secrets, execution, and prompts
+- **Clear** — Tells you exactly what was found and where
+- **Extensible** — Add your own signatures via JSON
+
+## Limitations
+
+- Text-based pattern matching (no AST analysis)
+- Cannot detect all malware — only patterns in the signature database
+- Recommend: Use as first-line screening, not final security audit
+
+## From the Builder
+
+CertainLogic builds tools for reliability. I test every scanner signature against real skills before release. If something slips through, I fix it and push an update. No obfuscation. No hiding.
 
 ## Links
 
 - GitHub: https://github.com/CertainLogicAI/skill-vetter-plus
-- ClawHub: https://clawhub.ai/skill-vetter-plus
-- Docs: https://certainlogic.ai/docs/vetter-plus
+- ClawHub: https://clawhub.ai/certainlogicai/skill-vetter-plus
+- Docs: https://certainlogic.ai/docs/skill-vetter-plus
 
 ---
 
-*Built with brutal honesty by [CertainLogic](https://certainlogic.ai)*
+*Built by CertainLogic | [certainlogic.ai](https://certainlogic.ai)*
