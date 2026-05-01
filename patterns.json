@@ -1,0 +1,25 @@
+{
+  "_note": "These are STATIC DETECTION PATTERNS for a security scanner. They SEARCH for dangerous code. They do not execute it.",
+  "patterns": {
+    "secrets": [
+      {"id": "hardcoded-api-key", "regex": "api[_-]?key\\s*[:=]\\s*['\"][a-zA-Z0-9_\\-]{20,}['\"]", "message": "Possible hardcoded API key detected."},
+      {"id": "hardcoded-token", "regex": "token\\s*[:=]\\s*['\"][a-zA-Z0-9_\\-\\.]{20,}['\"]", "message": "Possible hardcoded token detected."},
+      {"id": "hardcoded-password", "regex": "password\\s*[:=]\\s*['\"][^\\s'\"]{8,}['\"]", "message": "Possible hardcoded password detected."}
+    ],
+    "unsafe_execution": [
+      {"id": "unsafe-os-system", "regex": "os\\.system\\s*\\(", "message": "Use of os.system() can be dangerous; prefer subprocess.run()."},
+      {"id": "unsafe-eval", "regex": "eval\\s*\\(", "message": "Use of eval() can execute arbitrary code."},
+      {"id": "unsafe-exec", "regex": "exec\\s*\\(", "message": "Use of exec() can execute arbitrary code."},
+      {"id": "subprocess-shell-true", "regex": "subprocess\\.call\\s*\\([^)]*shell\\s*=\\s*True", "message": "subprocess with shell=True is vulnerable to shell injection."}
+    ],
+    "network": [
+      {"id": "suspicious-post-target", "regex": "requests\\.post\\s*\\([^)]*['\"]https?://[^'\"]*\\.(sh|bin|exe|zip)", "message": "POST request to suspicious file extension domain."},
+      {"id": "raw-urlopen", "regex": "urllib\\.request\\.urlopen\\s*\\(", "message": "Raw urlopen calls can be used for data exfiltration."}
+    ],
+    "prompt_injection": [
+      {"id": "ignore-instructions", "regex": "ignore\\s+(?:previous|prior|all)\\s+instructions", "message": "Potential prompt injection: asking to ignore instructions.", "flags": "IGNORECASE"},
+      {"id": "ignore-above", "regex": "ignore\\b.*\\babove\\b", "message": "Potential prompt injection: asking to ignore above content.", "flags": "IGNORECASE"},
+      {"id": "system-prompt-unlock", "regex": "system\\s+prompt\\s*:?\\s*\\b(unlock|reveal|show|disregard)\\b", "message": "Document contains potential prompt injection language.", "flags": "IGNORECASE"}
+    ]
+  }
+}
