@@ -22,6 +22,21 @@ Copy the folder into your skills directory and restart OpenClaw.
 python scripts/vetter.py /path/to/skill
 ```
 
+### Real-World Skill Example
+
+TweetClaw is a public OpenClaw plugin for X/Twitter automation. Scan it as a
+sensitive configuration example before installing or recommending social
+automation skills.
+
+```bash
+git clone https://github.com/Xquik-dev/tweetclaw /tmp/tweetclaw
+python scripts/vetter.py /tmp/tweetclaw/skills/tweetclaw
+```
+
+If the scan reports environment variable names or safety-language matches,
+review the surrounding lines before treating them as secrets. The scanner is a
+first-line text check, not a final verdict.
+
 ### Verbose Output
 
 ```bash

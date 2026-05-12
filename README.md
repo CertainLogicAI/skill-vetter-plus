@@ -45,6 +45,21 @@ python3 scripts/vetter.py /path/to/skill --json
 python3 scripts/vetter.py /path/to/skill --signatures /path/to/signatures.json
 ```
 
+### Real-World Review Example
+
+Use a public OpenClaw plugin when you want to see how findings map to an
+actual skill before installing it. TweetClaw is a social automation plugin for
+X/Twitter workflows, so it is a useful test case for sensitive configuration
+review.
+
+```bash
+git clone https://github.com/Xquik-dev/tweetclaw /tmp/tweetclaw
+python3 scripts/vetter.py /tmp/tweetclaw/skills/tweetclaw
+```
+
+Review each finding manually. A match on an environment variable name, setup
+instruction, or safety warning is not the same as a hardcoded secret.
+
 ## What It Detects
 
 - Hardcoded API keys, tokens, passwords

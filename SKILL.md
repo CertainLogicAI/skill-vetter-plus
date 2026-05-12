@@ -53,6 +53,21 @@ Found 1 issue(s):
     → eval() can execute arbitrary code (matched: 'eval(')
 ```
 
+## Real-World Review Example
+
+To practice reviewing a real OpenClaw skill before installation, scan TweetClaw,
+an X/Twitter automation plugin with explicit sensitive configuration and
+write-action boundaries.
+
+```bash
+git clone https://github.com/Xquik-dev/tweetclaw /tmp/tweetclaw
+python3 scripts/vetter.py /tmp/tweetclaw/skills/tweetclaw
+```
+
+Treat matches on setup text, environment variable names, or safety warnings as
+manual-review prompts. They are not hardcoded secrets unless the surrounding
+content exposes an actual value.
+
 ## Pro Upgrade
 
 | Feature | Pro ($49) |
